@@ -55,7 +55,7 @@ public class FileManager {
             + "AccountName="+ACCOUNT_NAME+";"
             + "AccountKey="+ACCOUNT_KEY+"";
 
-    private static CloudBlobContainer getContainer() throws Exception {
+    private static CloudBlobContainer getContainer(String selectContainer) throws Exception {
         // Retrieve storage account from connection-string.
 
         CloudStorageAccount storageAccount = CloudStorageAccount
@@ -66,14 +66,18 @@ public class FileManager {
 
         // Get a reference to a container.
         // The container name must be lower case
-        CloudBlobContainer container = blobClient.getContainerReference(CONTAINER_NAME.toLowerCase());
+        CloudBlobContainer container;
+         if (!(selectContainer != null))
+            container = blobClient.getContainerReference(CONTAINER_NAME.toLowerCase());
+        else 
+            container = blobClient.getContainerReference(selectContainer.toLowerCase());
 
         return container;
     }
 
-    public static String UploadFile(InputStream image, int imageLength, String fileName, String contentType) throws Exception {
+    public static String UploadFile(InputStream image, int imageLength, String fileName, String contentType, String selectContainer) throws Exception {
 
-        CloudBlobContainer container = getContainer();
+        CloudBlobContainer container = getContainer(selectContainer);
         container.createIfNotExists();
 
         BlobContainerPermissions permissions = container.downloadPermissions();
@@ -89,7 +93,7 @@ public class FileManager {
 
     public static String UploadFileSas(InputStream image, int imageLength, String fileName, String contentType) throws Exception {
 
-        CloudBlobContainer container = getContainer();
+        CloudBlobContainer container = getContainer(null);
         container.createIfNotExists();
 
         BlobContainerPermissions permissions = container.downloadPermissions();
@@ -113,7 +117,7 @@ public class FileManager {
     }
 
     public static String[] ListImages() throws Exception{
-        CloudBlobContainer container = getContainer();
+        CloudBlobContainer container = getContainer(null);
 
         Iterable<ListBlobItem> blobs = container.listBlobs();
 
@@ -126,7 +130,7 @@ public class FileManager {
     }
 
     public static void GetImage(String name, OutputStream imageStream, long imageLength) throws Exception {
-        CloudBlobContainer container = getContainer();
+        CloudBlobContainer container = getContainer(null);
 
         CloudBlockBlob blob = container.getBlockBlobReference(name);
 

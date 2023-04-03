@@ -41,6 +41,8 @@ public class EAzureBlobStorageFile extends ReactContextBaseJavaModule{
 
         final String name = options.hasKey("fileName") ? options.getString("fileName") : null;
         String filePath = options.hasKey("filePath") ? options.getString("filePath") : null;
+        //Choose a container
+        String selectContainer = options.hasKey("selectContainer") ? options.getString("selectContainer") : null;
         final String contentType = options.hasKey("contentType") ? options.getString("contentType") : null;
 
         try {
@@ -56,13 +58,13 @@ public class EAzureBlobStorageFile extends ReactContextBaseJavaModule{
 
                     try {
 
-                        final String imageName = EAzureBlobStorageFile.SAS ?  FileManager.UploadFileSas(imageStream, imageLength,name, contentType ) : FileManager.UploadFile(imageStream, imageLength,name, contentType );
+                        final String imageName = FileManager.UploadFile(imageStream, imageLength,name, contentType, selectContainer );
 
 
                         handler.post(new Runnable() {
 
                             public void run() {
-                                Toast.makeText(ctx, "Image Uploaded Successfully...", Toast.LENGTH_SHORT).show();
+                                // Toast.makeText(ctx, "Image Uploaded Successfully...", Toast.LENGTH_SHORT).show();
                                 promise.resolve(imageName);
                             }
                         });
@@ -86,10 +88,10 @@ public class EAzureBlobStorageFile extends ReactContextBaseJavaModule{
     }
 
     @ReactMethod
-    public void configure(String account_name, String account_key, String constainer_name, boolean sas_token ){
+    public void configure(String account_name, String account_key, String constainer_name ){
         this.ACCOUNT_NAME = account_name;
         this.ACCOUNT_KEY = account_key;
         this.CONTAINER_NAME = constainer_name;
-        this.SAS = sas_token;
+        // this.SAS = sas_token;
     }
 }

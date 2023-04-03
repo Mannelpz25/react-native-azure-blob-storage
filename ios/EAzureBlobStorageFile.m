@@ -5,7 +5,7 @@ NSString *ACCOUNT_NAME = @"account_name";
 NSString *ACCOUNT_KEY = @"account_key";
 NSString *CONTAINER_NAME = @"container_name";
 NSString *CONNECTION_STRING = @"";
-BOOL *SAS = false;
+bool *SAS = false;
 static NSString *const _filePath = @"filePath";
 static NSString *const _contentType = @"contentType";
 static NSString *const _fileName = @"fileName";
@@ -15,7 +15,7 @@ RCT_EXPORT_METHOD(uploadFile:(NSDictionary *)options
          findEventsWithResolver:(RCTPromiseResolveBlock)resolve
          rejecter:(RCTPromiseRejectBlock)reject)
 {
-  if(SAS){
+  if(!SAS){
     [self uploadBlobToContainer: options rejecter:reject resolver:resolve];
   }else{
     [self uploadBlobToContainerSas: options rejecter:reject resolver:resolve];
@@ -116,13 +116,11 @@ RCT_EXPORT_METHOD(uploadFile:(NSDictionary *)options
 }
 RCT_EXPORT_METHOD(configure:(NSString *)account_name
          key:(NSString *)account_key
-         container:(NSString *)conatiner_name
-         token:(BOOL *)sas_token)
+         container:(NSString *)conatiner_name)
 {
   ACCOUNT_NAME = account_name;
   ACCOUNT_KEY = account_key;
   CONTAINER_NAME = [conatiner_name lowercaseString];
   CONNECTION_STRING = [NSString stringWithFormat:@"DefaultEndpointsProtocol=https;AccountName=%@;AccountKey=%@",ACCOUNT_NAME,ACCOUNT_KEY];
-  SAS = sas_token;
 }
 @end
